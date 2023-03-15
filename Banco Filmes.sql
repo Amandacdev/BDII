@@ -1,16 +1,18 @@
+--Tarefa 1
+
 CREATE TABLE Filme (
    	CodFILME   	Serial  NOT NULL,
-   	Titulo      Varchar(25),
-   	Ano         integer,
-   	Duracao   	 integer,
+   	Titulo      	Varchar(25),
+   	Ano         	integer,
+   	Duracao   	integer,
    	CodCATEG   	integer,
    	CodEst     	integer);
 	
 CREATE TABLE Artista (
    	CodART  	Serial  NOT NULL,
    	NomeART		Varchar(25),
-   	Cidade      Varchar(20),
-   	Pais        Varchar(20),
+   	Cidade      	Varchar(20),
+   	Pais        	Varchar(20),
    	DataNasc   	Date);
 	
 CREATE TABLE Estudio (
@@ -23,16 +25,16 @@ CREATE TABLE Categoria (
 	
 CREATE TABLE Personagem (
    	CodART 		integer  NOT NULL,
-   	CodFILME   integer  NOT NULL,
+   	CodFILME   	integer  NOT NULL,
    	NomePers  	VARCHAR(25),
-   	Cache       numeric(15,2));
+   	Cache       	numeric(15,2));
 	
 ALTER TABLE Filme ADD CONSTRAINT PKFilme PRIMARY KEY(CodFILME);
 ALTER TABLE Artista ADD CONSTRAINT PKArtista PRIMARY KEY(CodART);
 ALTER TABLE Estudio ADD CONSTRAINT PKEst PRIMARY KEY(CodEst);
 ALTER TABLE Categoria ADD CONSTRAINT PKCategoria PRIMARY KEY(CodCATEG);
-ALTER TABLE Personagem ADD CONSTRAINT PKPersonagem PRIMARY KEY(CodART,CodFILME);
 
+ALTER TABLE Personagem ADD CONSTRAINT PKPersonagem PRIMARY KEY(CodART,CodFILME);
 ALTER TABLE Filme ADD CONSTRAINT FKFilme1Categ FOREIGN KEY(CodCATEG) REFERENCES Categoria;
 ALTER TABLE Filme ADD CONSTRAINT FKFilme2Estud FOREIGN KEY(CodEst) REFERENCES Estudio;
 ALTER TABLE Personagem ADD CONSTRAINT FKPersonagem2Artis FOREIGN KEY(CodART) REFERENCES Artista;
@@ -77,7 +79,7 @@ Select * from estudio;
 Select * from categoria;
 Select * from personagem;
 
-//Inserindo 3 em cada categoria
+--Questão 7: Insira mais três registros (de sua autoria) em cada tabela.
 
 insert into estudio values(default,'Paramount');
 insert into estudio values(default,'Warner');
@@ -95,20 +97,122 @@ insert into personagem values(8,7,'Maxwell',10000);
 insert into personagem values(9,8,'Pantera Negra',10000);
 insert into personagem values(10,9,'Gru',10000);
 
+--Questão 8:  Verifique quais são os artistas cadastrados ordenados pelo nome.
+
 select * from artista ORDER BY nomeart;
+
+--Questão 9: Selecione os artistas que têm o nome iniciando com a letra ‘B’.
+
 select * from artista where nomeart like 'B%';
+
+--Questão 10: Verifique os filmes que foram lançados em 2019.
+
 select * from filme where ano = 2019;
 
+-- Questão 11: Atualize o cachê dos artistas em 15%.
+
 update personagem set cache = cache*1.15;
+
+-- Questão 12: Atualize o país de 3 artistas à sua escolha.
 
 update artista set pais = 'EUA' where codart = 3;
 update artista set pais = '' where codart = 2;
 update artista set pais = 'EUA' where codart = 1;
 
+--Questão 13: Insira 2 artistas brasileiros.
+
 insert into artista values(default,'Fernanda Montenegro',null,'Brasil','16/10/1929');
 insert into artista values(default,'Lilia Cabral',null,'Brasil','16/06/1957');
 
+--Questãp 14: Delete 1 artista recentemente incluído que não seja brasileiro.
+
 delete from artista where codart = 2;
 
+--Tarefa 2
 
+--Questão 1: Faça um select geral nas cinco tabelas e observe seus relacionamentos.
+
+select * from artista;
+select * from filme;
+select * from estudio;
+select * from personagem;
+select * from categoria;
+
+--Questão 2: 
+
+insert into filme values(default,'Elvis',2022,120,null,3);
+select * from filme;
+
+--Questão 3: Verifique quais os títulos dos filmes que possuem duração maior que 120 min?
+
+select titulo from filme where duracao >= 120;
+
+--Questao 4: Na tabela ARTISTA, quais artistas possuem cidade nula? Após a consulta, atualize as cidades nulas encontradas para três artistas.
+select nomeart from artista where cidade is null;
+update artista set cidade = 'Syracuse' where nomeart = 'Tom Cruise';
+update artista set cidade = 'Smyrna' where nomeart = 'Julia Roberts';
+update artista set cidade = 'Rio de Janeiro' where nomeart = 'Fernanda Montenegro';
+
+--Questao 5: Qual a descrição da categoria do filme ‘Coringa’?
+
+Select desccateg 
+from categoria
+join filme
+on categoria.codcateg = filme.codcateg
+where filme.titulo = 'Coringa';
+
+--Alternativa:
+SELECT c.desccateg
+FROM filme F join categoria C
+ON F.codcateg = c.codcateg
+where F.titulo = 'Coringa';
+
+--6: Mostre os títulos de filmes, com seus nomes de estúdios e nomes de suas categorias.
+
+select titulo, nomeest, desccateg
+from filme
+join estudio
+on filme.codest = estudio.codest
+join categoria
+on filme.codcateg = categoria.codcateg;
+
+--Questao 7: Qual o nome dos artistas que fizeram o filme ‘Encontro Explosivo’?
+
+select nomeart
+from artista
+join personagem
+on artista.codart = personagem.codart
+join filme
+on filme.codfilme = personagem.codfilme 
+where titulo = 'Encontro Explosivo';
+
+--Questão 8: Selecione os artistas que têm o nome iniciando com a letra ‘B’ e participaram de filmes da categoria ‘Aventura’.
+
+select nomeart
+from artista
+join personagem
+on artista.codart = personagem.codart
+join filme
+on personagem.codfilme = filme.codfilme
+join categoria
+on filme.codcateg = categoria.codcateg
+where categoria.desccateg = 'Aventura' and nomeart like 'B%';
+
+--Questão 9: Apresente quantos filmes existem por categoria. Para isso mostre a descrição da categoria e sua respectiva contagem. Use group by.
+
+select categoria, count(*)
+from filme
+join categoria
+on filme.codcateg = categoria.codcateg
+group by categoria;
+
+--Questão 10:Left join mostra todas as informações solicitadas da tabela da esquerda(todos os nomeart) e as informações em intersecção.
+
+select a.nomeart, p.nomepers
+from artista a left outer join personagem p on a.codart = p.codart;
+
+--Questão 11: Mostra os titulos(da tabela filme) e a descrição da categoria(da tabela categoria) para os casos em que a categoria é nula.
+Select f.titulo as Filme, c.desccateg as Categoria
+From filme f right join categoria c on f.codcateg = c.codcateg
+Where c.codcateg is null; 
 

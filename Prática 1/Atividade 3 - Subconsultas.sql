@@ -73,46 +73,5 @@ from artista a
 join personagem p
 on a.codart = p.codart
 where p.cache > (select avg(cache)
-				 from personagem);
-
-
-
-
-
-
-
---Dúvidas:
-
---Atividade 2
-
---Questão 10:Left join mostra todas as informações solicitadas da tabela da esquerda(todos os nomeart) e as informações em intersecção.
-
-select a.nomeart, p.nomepers
-from artista a left outer join personagem p on a.codart = p.codart;
-
---Questão 11: Mostra os titulos(da tabela filme) e a descrição da categoria(da tabela categoria) para os casos em que a categoria é nula.
-Select f.titulo as Filme, c.desccateg as Categoria
-From filme f right join categoria c on f.codcateg = c.codcateg
-Where c.codcateg is null; 
-
---Estudar melhor os tipos de join
-
---Atividade 3, questão 6, tem como escrever como algo assim? :
-
-select a.nomeart
-from artista a
-join personagem p
-on a.codart = p.codart
-and p.cache > avg(p.cache);
-
-
-
-
-
-
-
-
-
-
-
+		from personagem);
 
